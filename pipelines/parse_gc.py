@@ -1,6 +1,6 @@
 import argparse, json
 from pathlib import Path
-from parsers.g1 import parse_line
+from parsers.unified import parse_line
 
 def main():
     ap = argparse.ArgumentParser()
