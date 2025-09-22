@@ -1,0 +1,9 @@
+- id: slo_p95_high
+  when:
+    all:
+      - { p95_pause: ">=200" }
+      - { stw_percent: ">=2" }
+  severity: high
+  advice:
+    - "배치/IO 스파이크 시간대 상관분석"
+    - "-XX:MaxGCPauseMillis 목표 재설정 고려"

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Rules Manager</title>
+  <style>
+    body { font-family: sans-serif; margin: 2em; }
+    textarea { width: 100%; height: 120px; }
+    pre { background: #f0f0f0; padding: 0.5em; }
+  </style>
+</head>
+<body>
+  <h1>GC Rules Manager</h1>
+
+  <h2>현재 규칙</h2>
+  <pre id="rules"></pre>
+  <button onclick="loadRules()">Reload</button>
+
+  <h2>규칙 추가</h2>
+  <textarea id="ruleInput">
+{
+  "id": "test_rule",
+  "when": { "any": [ { "p95_pause": ">=10" } ] },
+  "severity": "low",
+  "advice": [ "테스트용 규칙" ]
+}
+  </textarea><br>
+  <button onclick="addRule()">추가</button>
+
+<script>
+async function loadRules() {
+  let res = await fetch('/rules/list');
+  let data = await res.json();
+  document.getElementById('rules').innerText = JSON.stringify(data, null, 2);
+}
+async function addRule() {
+  let txt = document.getElementById('ruleInput').value;
+  let obj = JSON.parse(txt);
+  await fetch('/rules/add', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(obj)
+  });
+  loadRules();
+}
+loadRules();
+</script>
+</body>
+</html>
