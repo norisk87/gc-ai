@@ -1,25 +1,24 @@
-# 1. 긴 Stop-The-World 정지 탐지
+# === Stop-The-World 정지 관련 ===
 - id: long_pause
   when:
     any:
-      - { p99_pause: ">=500" }      # 500ms 이상
-      - { p95_pause: ">=200" }      # 200ms 이상이 빈번
+      - { p99_pause: ">=500" }
+      - { p95_pause: ">=200" }
   severity: high
   advice:
     - "힙 크기/리전 크기 조정"
     - "애플리케이션 메모리 사용 패턴 점검"
 
-# 2. STW 시간 비율 과다
 - id: stw_over_budget
   when:
     all:
-      - { stw_percent: ">=5" }      # 전체 시간의 5% 이상을 STW로 소비
+      - { stw_percent: ">=5" }
   severity: high
   advice:
     - "동시성 GC 튜닝 고려"
     - "배치 작업 시간대와 겹치는지 확인"
 
-# 3. Evacuation Failure (G1, Shenandoah)
+# === Collector 특화 이벤트 ===
 - id: evacuation_failure
   when:
     any:
@@ -30,17 +29,15 @@
     - "-XX:InitiatingHeapOccupancyPercent 하향"
     - "대형 객체 할당 패턴 점검"
 
-# 4. Humongous 객체 비율 과다 (G1)
 - id: humongous_objects
   when:
     all:
-      - { humongous_ratio: ">=5" }   # 전체 중 5% 이상
+      - { humongous_ratio: ">=5" }
   severity: medium
   advice:
     - "-XX:G1HeapRegionSize 재평가"
     - "대형 배열/버퍼 슬라이싱 또는 풀링 고려"
 
-# 5. Full GC 발생
 - id: full_gc_detected
   when:
     any:
@@ -51,22 +48,16 @@
     - "Old 영역 압박 여부 확인"
     - "GC 로그와 힙덤프 분석"
 
-# 6. Metaspace 증가 지속
 - id: metaspace_growth
   when:
     all:
-      - { metaspace_after_mb: ">=512" }   # 512MB 이상
+      - { metaspace_after_mb: ">=512" }
   severity: medium
   advice:
     - "동적 클래스 로딩/프록시 누수 점검"
     - "-XX:MaxMetaspaceSize 조정 고려"
 
-# 7. ZGC/Shenandoah 동시 단계 과도
 - id: long_concurrent_phase
   when:
     any:
-      - { concurrent_ms: ">=200" }   # Concurrent Mark/Relocate가 200ms 이상
-  severity: low
-  advice:
-    - "동시성 스레드 수 조정"
-    - "워크로드 부하와의 상관관계 확인"
+      - { concurrent_ms: ">=200" }
