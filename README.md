@@ -1,4 +1,4 @@
-# GC-AI Starter Kit v2 (with Rules Web UI)
+# GC-AI 
 
 ## 실행 방법
 ```bash
